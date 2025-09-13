@@ -43,8 +43,8 @@ CREATE TABLE movimentacoes (
 
 -- Inserir usuário administrador padrão
 INSERT INTO usuarios (nome, username, senha) VALUES 
-('Kalleby Schultz', 'Kalleby Schultz', '$2y$10$LrM.AVy5jfD47yWM0gHhM.kn1uBHOI4ptA9owLVOLSdro76LIOhpC');
--- Senha padrão: admin123
+('Kalleby Schultz', 'Kalleby Schultz', 'admin123');
+-- Senha padrão: admin123 (sem hash para desenvolvimento local)
 
 -- Índices para melhor performance
 CREATE INDEX idx_epi_nome ON epis(nome);

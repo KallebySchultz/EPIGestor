@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'criar_usuario':
                 $nome = sanitizar($_POST['nome']);
                 $username = sanitizar($_POST['username']);
-                $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+                $senha = $_POST['senha']; // Senha sem hash para desenvolvimento local
                 
                 // Verificar se username já existe
                 $query = "SELECT id FROM usuarios WHERE username = ?";
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $erro = "Este nome de usuário já está em uso por outro usuário.";
                 } else {
                     if (!empty($_POST['senha'])) {
-                        $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+                        $senha = $_POST['senha']; // Senha sem hash para desenvolvimento local
                         $query = "UPDATE usuarios SET nome = ?, username = ?, senha = ? WHERE id = ?";
                         $params = [$nome, $username, $senha, $id];
                     } else {

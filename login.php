@@ -32,7 +32,8 @@
                 if ($stmt->rowCount() > 0) {
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                     
-                    if (password_verify($senha, $row['senha'])) {
+                    // Comparação direta de senha (sem hash para desenvolvimento local)
+                    if ($senha === $row['senha']) {
                         session_start();
                         $_SESSION['usuario_id'] = $row['id'];
                         $_SESSION['usuario_nome'] = $row['nome'];

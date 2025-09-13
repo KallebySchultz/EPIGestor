@@ -79,10 +79,10 @@ Certifique-se de que os arquivos PHP tenham permissões adequadas de leitura.
 ## Primeiro Acesso
 
 ### Login Padrão
-- **Email:** admin@klarbyte.com
-- **Senha:** password
+- **Nome de Usuário:** Kalleby Schultz
+- **Senha:** admin123
 
-**Importante:** Altere a senha padrão após o primeiro login!
+**Importante:** Este sistema foi configurado para desenvolvimento local sem hash de senhas. Para produção, implemente novamente o hash de senhas!
 
 ## Estrutura de Arquivos
 
@@ -135,7 +135,8 @@ Certifique-se de que os arquivos PHP tenham permissões adequadas de leitura.
 
 ## Segurança
 
-- Senhas são armazenadas com hash seguro (password_hash)
+- **AVISO:** Para desenvolvimento local, as senhas são armazenadas em texto simples sem hash
+- **IMPORTANTE:** Para ambientes de produção, implemente novamente o hash de senhas (password_hash/password_verify)
 - Validação e sanitização de dados de entrada
 - Proteção contra SQL injection através de prepared statements
 - Controle de sessão para acesso às páginas
