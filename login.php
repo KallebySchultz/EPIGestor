@@ -65,10 +65,7 @@
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
             </form>
             
-            <div style="margin-top: 1rem; text-align: center; font-size: 0.875rem; color: #666;">
-                <p>Usuário padrão: Kalleby Schultz</p>
-                <p>Senha padrão: admin123</p>
-            </div>
+
         </div>
     </div>
 </body>

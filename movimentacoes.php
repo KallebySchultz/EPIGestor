@@ -72,11 +72,8 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $epis_lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar movimentações com filtros
-$filtro_epi = isset($_GET['epi']) ? (int)$_GET['epi'] : '';
-$filtro_tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';
-$filtro_data_inicio = isset($_GET['data_inicio']) ? $_GET['data_inicio'] : '';
-$filtro_data_fim = isset($_GET['data_fim']) ? $_GET['data_fim'] : '';
+// Buscar movimentações com pesquisa
+$search = isset($_GET['search']) ? sanitizar($_GET['search']) : '';
 
 $query = "SELECT m.*, e.nome as epi_nome, u.nome as usuario_nome 
           FROM movimentacoes m 
@@ -85,24 +82,10 @@ $query = "SELECT m.*, e.nome as epi_nome, u.nome as usuario_nome
           WHERE 1=1";
 $params = [];
 
-if ($filtro_epi) {
-    $query .= " AND m.epi_id = ?";
-    $params[] = $filtro_epi;
-}
-
-if ($filtro_tipo) {
-    $query .= " AND m.tipo_movimentacao = ?";
-    $params[] = $filtro_tipo;
-}
-
-if ($filtro_data_inicio) {
-    $query .= " AND DATE(m.data_movimentacao) >= ?";
-    $params[] = $filtro_data_inicio;
-}
-
-if ($filtro_data_fim) {
-    $query .= " AND DATE(m.data_movimentacao) <= ?";
-    $params[] = $filtro_data_fim;
+if ($search) {
+    $query .= " AND (e.nome LIKE ? OR m.tipo_movimentacao LIKE ? OR m.responsavel LIKE ? OR m.empresa LIKE ? OR m.observacoes LIKE ?)";
+    $searchParam = "%$search%";
+    $params = [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam];
 }
 
 $query .= " ORDER BY m.data_movimentacao DESC LIMIT 100";
@@ -215,46 +198,18 @@ $movimentacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="card">
             <div class="card-header">Histórico de Movimentações</div>
             <div class="card-body">
-                <!-- Formulário de filtros -->
+                <!-- Formulário de busca -->
                 <form method="GET" style="margin-bottom: 1rem;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="epi">EPI:</label>
-                            <select id="epi" name="epi" class="form-control">
-                                <option value="">Todos</option>
-                                <?php foreach ($epis_lista as $epi): ?>
-                                    <option value="<?php echo $epi['id']; ?>" <?php echo $filtro_epi == $epi['id'] ? 'selected' : ''; ?>>
-                                        <?php echo $epi['nome']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                    <div style="display: flex; gap: 1rem; align-items: end;">
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label for="search">Buscar Movimentação:</label>
+                            <input type="text" id="search" name="search" class="form-control" 
+                                   value="<?php echo $search; ?>" placeholder="EPI, tipo, responsável, empresa ou observações">
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="tipo">Tipo:</label>
-                            <select id="tipo" name="tipo" class="form-control">
-                                <option value="">Todos</option>
-                                <option value="entrada" <?php echo $filtro_tipo == 'entrada' ? 'selected' : ''; ?>>Entrada</option>
-                                <option value="retirada" <?php echo $filtro_tipo == 'retirada' ? 'selected' : ''; ?>>Retirada</option>
-                                <option value="devolucao" <?php echo $filtro_tipo == 'devolucao' ? 'selected' : ''; ?>>Devolução</option>
-                                <option value="descarte" <?php echo $filtro_tipo == 'descarte' ? 'selected' : ''; ?>>Descarte</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="data_inicio">Data Início:</label>
-                            <input type="date" id="data_inicio" name="data_inicio" class="form-control" value="<?php echo $filtro_data_inicio; ?>">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="data_fim">Data Fim:</label>
-                            <input type="date" id="data_fim" name="data_fim" class="form-control" value="<?php echo $filtro_data_fim; ?>">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 1rem;">
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                        <a href="movimentacoes.php" class="btn btn-warning">Limpar Filtros</a>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                        <?php if ($search): ?>
+                            <a href="movimentacoes.php" class="btn btn-warning">Limpar</a>
+                        <?php endif; ?>
                     </div>
                 </form>
 
