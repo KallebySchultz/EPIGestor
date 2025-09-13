@@ -11,21 +11,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         switch ($_POST['acao']) {
             case 'criar_usuario':
                 $nome = sanitizar($_POST['nome']);
-                $email = sanitizar($_POST['email']);
+                $username = sanitizar($_POST['username']);
                 $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
                 
-                // Verificar se email já existe
-                $query = "SELECT id FROM usuarios WHERE email = ?";
+                // Verificar se username já existe
+                $query = "SELECT id FROM usuarios WHERE username = ?";
                 $stmt = $db->prepare($query);
-                $stmt->execute([$email]);
+                $stmt->execute([$username]);
                 
                 if ($stmt->rowCount() > 0) {
-                    $erro = "Este email já está em uso.";
+                    $erro = "Este nome de usuário já está em uso.";
                 } else {
-                    $query = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
+                    $query = "INSERT INTO usuarios (nome, username, senha) VALUES (?, ?, ?)";
                     $stmt = $db->prepare($query);
                     
-                    if ($stmt->execute([$nome, $email, $senha])) {
+                    if ($stmt->execute([$nome, $username, $senha])) {
                         $sucesso = "Usuário criado com sucesso!";
                     } else {
                         $erro = "Erro ao criar usuário.";
@@ -36,23 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'editar_usuario':
                 $id = (int)$_POST['id'];
                 $nome = sanitizar($_POST['nome']);
-                $email = sanitizar($_POST['email']);
+                $username = sanitizar($_POST['username']);
                 
-                // Verificar se email já existe (exceto para o próprio usuário)
-                $query = "SELECT id FROM usuarios WHERE email = ? AND id != ?";
+                // Verificar se username já existe (exceto para o próprio usuário)
+                $query = "SELECT id FROM usuarios WHERE username = ? AND id != ?";
                 $stmt = $db->prepare($query);
-                $stmt->execute([$email, $id]);
+                $stmt->execute([$username, $id]);
                 
                 if ($stmt->rowCount() > 0) {
-                    $erro = "Este email já está em uso por outro usuário.";
+                    $erro = "Este nome de usuário já está em uso por outro usuário.";
                 } else {
                     if (!empty($_POST['senha'])) {
                         $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
-                        $query = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id = ?";
-                        $params = [$nome, $email, $senha, $id];
+                        $query = "UPDATE usuarios SET nome = ?, username = ?, senha = ? WHERE id = ?";
+                        $params = [$nome, $username, $senha, $id];
                     } else {
-                        $query = "UPDATE usuarios SET nome = ?, email = ? WHERE id = ?";
-                        $params = [$nome, $email, $id];
+                        $query = "UPDATE usuarios SET nome = ?, username = ? WHERE id = ?";
+                        $params = [$nome, $username, $id];
                     }
                     
                     $stmt = $db->prepare($query);
@@ -180,9 +180,9 @@ if (isset($_GET['editar'])) {
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" class="form-control" 
-                                   value="<?php echo $usuario_editando ? $usuario_editando['email'] : ''; ?>" required>
+                            <label for="username">Nome de Usuário:</label>
+                            <input type="text" id="username" name="username" class="form-control" 
+                                   value="<?php echo $usuario_editando ? $usuario_editando['username'] : ''; ?>" required>
                         </div>
                     </div>
                     
@@ -217,7 +217,7 @@ if (isset($_GET['editar'])) {
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Email</th>
+                                <th>Nome de Usuário</th>
                                 <th>Data de Criação</th>
                                 <th>Status</th>
                                 <th>Ações</th>
@@ -232,7 +232,7 @@ if (isset($_GET['editar'])) {
                                         <span class="status-badge status-info" style="margin-left: 0.5rem;">Você</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo $usuario['email']; ?></td>
+                                <td><?php echo $usuario['username']; ?></td>
                                 <td><?php echo formatarDataHora($usuario['data_criacao']); ?></td>
                                 <td>
                                     <?php if ($usuario['ativo']): ?>

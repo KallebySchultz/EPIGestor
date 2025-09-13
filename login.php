@@ -18,15 +18,15 @@
             require_once 'config.php';
             
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $email = sanitizar($_POST['email']);
+                $username = sanitizar($_POST['username']);
                 $senha = $_POST['senha'];
                 
                 $database = new Database();
                 $db = $database->getConnection();
                 
-                $query = "SELECT id, nome, senha FROM usuarios WHERE email = ? AND ativo = 1";
+                $query = "SELECT id, nome, senha FROM usuarios WHERE username = ? AND ativo = 1";
                 $stmt = $db->prepare($query);
-                $stmt->bindParam(1, $email);
+                $stmt->bindParam(1, $username);
                 $stmt->execute();
                 
                 if ($stmt->rowCount() > 0) {
@@ -39,10 +39,10 @@
                         header('Location: dashboard.php');
                         exit();
                     } else {
-                        $erro = "Email ou senha incorretos.";
+                        $erro = "Nome de usuário ou senha incorretos.";
                     }
                 } else {
-                    $erro = "Email ou senha incorretos.";
+                    $erro = "Nome de usuário ou senha incorretos.";
                 }
             }
             ?>
@@ -53,8 +53,8 @@
             
             <form method="POST">
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+                    <label for="username">Nome de Usuário:</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
                 </div>
                 
                 <div class="form-group">
@@ -66,8 +66,8 @@
             </form>
             
             <div style="margin-top: 1rem; text-align: center; font-size: 0.875rem; color: #666;">
-                <p>Usuário padrão: admin@klarbyte.com</p>
-                <p>Senha padrão: password</p>
+                <p>Usuário padrão: Kalleby Schultz</p>
+                <p>Senha padrão: admin123</p>
             </div>
         </div>
     </div>

@@ -11,10 +11,10 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $total_epis = $stmt->fetch(PDO::FETCH_ASSOC)['total_epis'];
 
-$query = "SELECT COUNT(*) as epis_vencidos FROM epis WHERE ativo = 1 AND validade < CURDATE()";
+$query = "SELECT SUM(valor_unitario * saldo_estoque) as valor_total_estoque FROM epis WHERE ativo = 1";
 $stmt = $db->prepare($query);
 $stmt->execute();
-$epis_vencidos = $stmt->fetch(PDO::FETCH_ASSOC)['epis_vencidos'];
+$valor_total_estoque = $stmt->fetch(PDO::FETCH_ASSOC)['valor_total_estoque'] ?? 0;
 
 $query = "SELECT COUNT(*) as estoque_baixo FROM epis WHERE ativo = 1 AND saldo_estoque <= quantidade_minima";
 $stmt = $db->prepare($query);
@@ -26,10 +26,10 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $movimentacoes_hoje = $stmt->fetch(PDO::FETCH_ASSOC)['movimentacoes_hoje'];
 
-// EPIs com problemas (vencidos ou estoque baixo)
-$query = "SELECT nome, validade, saldo_estoque, quantidade_minima FROM epis 
-          WHERE ativo = 1 AND (validade < CURDATE() OR saldo_estoque <= quantidade_minima) 
-          ORDER BY validade ASC, saldo_estoque ASC LIMIT 10";
+// EPIs com problemas (estoque baixo)
+$query = "SELECT nome, valor_unitario, saldo_estoque, quantidade_minima FROM epis 
+          WHERE ativo = 1 AND saldo_estoque <= quantidade_minima 
+          ORDER BY saldo_estoque ASC LIMIT 10";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $epis_problemas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -80,8 +80,8 @@ $ultimas_movimentacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="number"><?php echo $total_epis; ?></div>
             </div>
             <div class="dashboard-card">
-                <h3>EPIs Vencidos</h3>
-                <div class="number" style="color: #dc3545;"><?php echo $epis_vencidos; ?></div>
+                <h3>Valor Total em Estoque</h3>
+                <div class="number" style="color: #28a745;"><?php echo formatarMoeda($valor_total_estoque); ?></div>
             </div>
             <div class="dashboard-card">
                 <h3>Estoque Baixo</h3>
@@ -93,15 +93,10 @@ $ultimas_movimentacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
-        <?php if ($epis_vencidos > 0 || $estoque_baixo > 0): ?>
+        <?php if ($estoque_baixo > 0): ?>
         <div class="alert alert-warning">
             <strong>Atenção!</strong> 
-            <?php if ($epis_vencidos > 0): ?>
-                Há <?php echo $epis_vencidos; ?> EPI(s) com validade vencida.
-            <?php endif; ?>
-            <?php if ($estoque_baixo > 0): ?>
-                Há <?php echo $estoque_baixo; ?> EPI(s) com estoque abaixo do mínimo.
-            <?php endif; ?>
+            Há <?php echo $estoque_baixo; ?> EPI(s) com estoque abaixo do mínimo.
         </div>
         <?php endif; ?>
 
@@ -116,7 +111,7 @@ $ultimas_movimentacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <thead>
                                 <tr>
                                     <th>EPI</th>
-                                    <th>Validade</th>
+                                    <th>Valor Unitário</th>
                                     <th>Estoque</th>
                                     <th>Status</th>
                                 </tr>
@@ -125,14 +120,10 @@ $ultimas_movimentacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php foreach ($epis_problemas as $epi): ?>
                                 <tr>
                                     <td><?php echo $epi['nome']; ?></td>
-                                    <td><?php echo formatarData($epi['validade']); ?></td>
+                                    <td><?php echo formatarMoeda($epi['valor_unitario']); ?></td>
                                     <td><?php echo $epi['saldo_estoque'] . '/' . $epi['quantidade_minima']; ?></td>
                                     <td>
-                                        <?php if (validadeVencida($epi['validade'])): ?>
-                                            <span class="status-badge status-danger">Vencido</span>
-                                        <?php elseif (estoqueMinimo($epi['saldo_estoque'], $epi['quantidade_minima'])): ?>
-                                            <span class="status-badge status-warning">Estoque Baixo</span>
-                                        <?php endif; ?>
+                                        <span class="status-badge status-warning">Estoque Baixo</span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
