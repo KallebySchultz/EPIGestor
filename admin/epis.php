@@ -12,6 +12,7 @@ $user_name = "Administrador";
 
 // Incluir conexão com banco de dados
 require_once '../config/database.php';
+require_once '../includes/request_handler.php';
 
 // Processar ações (cadastro, edição, exclusão)
 $message = '';
@@ -38,28 +39,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'Nome do EPI é obrigatório.';
             $message_type = 'danger';
         } else {
+            // Preparar dados para o request handler
+            $data = [
+                'nome' => $nome,
+                'descricao' => $descricao,
+                'categoria' => $categoria,
+                'numero_ca' => $numero_ca,
+                'fornecedor_id' => $fornecedor_id,
+                'quantidade_estoque' => $quantidade_estoque,
+                'quantidade_minima' => $quantidade_minima,
+                'classificacao' => $classificacao,
+                'validade' => $validade,
+                'preco_unitario' => $preco_unitario,
+                'observacoes' => $observacoes
+            ];
+            
             if ($action === 'create') {
-                $success = executeUpdate(
-                    "INSERT INTO epis (nome, descricao, categoria, numero_ca, fornecedor_id, quantidade_estoque, quantidade_minima, classificacao, validade, preco_unitario, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [$nome, $descricao, $categoria, $numero_ca, $fornecedor_id, $quantidade_estoque, $quantidade_minima, $classificacao, $validade, $preco_unitario, $observacoes]
-                );
-                $message = $success ? 'EPI cadastrado com sucesso!' : 'Erro ao cadastrar EPI.';
-                $message_type = $success ? 'success' : 'danger';
+                $operation = function($data) {
+                    $success = executeUpdate(
+                        "INSERT INTO epis (nome, descricao, categoria, numero_ca, fornecedor_id, quantidade_estoque, quantidade_minima, classificacao, validade, preco_unitario, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        [$data['nome'], $data['descricao'], $data['categoria'], $data['numero_ca'], $data['fornecedor_id'], $data['quantidade_estoque'], $data['quantidade_minima'], $data['classificacao'], $data['validade'], $data['preco_unitario'], $data['observacoes']]
+                    );
+                    return $success ? 
+                        ['success' => true, 'message' => 'EPI cadastrado com sucesso!', 'data' => ['id' => getLastInsertId()]] :
+                        ['success' => false, 'error' => 'Erro ao cadastrar EPI no banco de dados'];
+                };
+                
+                $result = RequestHandler::executeWithRetry('epi_create', $data, $operation);
+                $message = $result['message'];
+                $message_type = $result['success'] ? 'success' : 'danger';
+                
+                if (!$result['success']) {
+                    $message .= ' (Request ID: ' . $result['request_id'] . ')';
+                }
             } else {
-                $success = executeUpdate(
-                    "UPDATE epis SET nome=?, descricao=?, categoria=?, numero_ca=?, fornecedor_id=?, quantidade_estoque=?, quantidade_minima=?, classificacao=?, validade=?, preco_unitario=?, observacoes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?",
-                    [$nome, $descricao, $categoria, $numero_ca, $fornecedor_id, $quantidade_estoque, $quantidade_minima, $classificacao, $validade, $preco_unitario, $observacoes, $id]
-                );
-                $message = $success ? 'EPI atualizado com sucesso!' : 'Erro ao atualizar EPI.';
-                $message_type = $success ? 'success' : 'danger';
+                $data['id'] = $id;
+                $operation = function($data) {
+                    $success = executeUpdate(
+                        "UPDATE epis SET nome=?, descricao=?, categoria=?, numero_ca=?, fornecedor_id=?, quantidade_estoque=?, quantidade_minima=?, classificacao=?, validade=?, preco_unitario=?, observacoes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?",
+                        [$data['nome'], $data['descricao'], $data['categoria'], $data['numero_ca'], $data['fornecedor_id'], $data['quantidade_estoque'], $data['quantidade_minima'], $data['classificacao'], $data['validade'], $data['preco_unitario'], $data['observacoes'], $data['id']]
+                    );
+                    return $success ? 
+                        ['success' => true, 'message' => 'EPI atualizado com sucesso!'] :
+                        ['success' => false, 'error' => 'Erro ao atualizar EPI no banco de dados'];
+                };
+                
+                $result = RequestHandler::executeWithRetry('epi_update', $data, $operation);
+                $message = $result['message'];
+                $message_type = $result['success'] ? 'success' : 'danger';
+                
+                if (!$result['success']) {
+                    $message .= ' (Request ID: ' . $result['request_id'] . ')';
+                }
             }
         }
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
-            $success = executeUpdate("UPDATE epis SET ativo = 0 WHERE id = ?", [$id]);
-            $message = $success ? 'EPI removido com sucesso!' : 'Erro ao remover EPI.';
-            $message_type = $success ? 'success' : 'danger';
+            $operation = function($data) {
+                $success = executeUpdate(
+                    "UPDATE epis SET ativo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                    [$data['id']]
+                );
+                return $success ? 
+                    ['success' => true, 'message' => 'EPI excluído com sucesso!'] :
+                    ['success' => false, 'error' => 'Erro ao excluir EPI'];
+            };
+            
+            $result = RequestHandler::executeWithRetry('epi_delete', ['id' => $id], $operation);
+            $message = $result['message'];
+            $message_type = $result['success'] ? 'success' : 'danger';
+            
+            if (!$result['success']) {
+                $message .= ' (Request ID: ' . $result['request_id'] . ')';
+            }
+        } else {
+            $message = 'ID inválido para exclusão.';
+            $message_type = 'danger';
         }
     }
 }

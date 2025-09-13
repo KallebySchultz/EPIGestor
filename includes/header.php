@@ -60,6 +60,11 @@
                             Relatórios
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="retry.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'retry.php' ? 'active' : ''; ?>">
+                            🔄 Retry Requests
+                        </a>
+                    </li>
                 <?php else: ?>
                     <!-- Menu Usuário -->
                     <li class="nav-item">

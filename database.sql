@@ -105,6 +105,21 @@ INSERT INTO empresas (nome, cnpj) VALUES
 INSERT INTO fornecedores (nome, cnpj, contato) VALUES 
 ('EPIs & Segurança Ltda', '98.765.432/0001-10', 'João Silva');
 
+-- Tabela de requests falhadas para retry
+CREATE TABLE IF NOT EXISTS failed_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    request_id VARCHAR(50) UNIQUE NOT NULL,
+    operation_type ENUM('epi_create', 'epi_update', 'epi_delete', 'funcionario_create', 'funcionario_update', 'funcionario_delete', 'movimentacao_create', 'movimentacao_update') NOT NULL,
+    request_data JSON NOT NULL,
+    error_message TEXT,
+    retry_count INT DEFAULT 0,
+    max_retries INT DEFAULT 3,
+    status ENUM('pending', 'retrying', 'success', 'failed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_retry_at TIMESTAMP NULL,
+    completed_at TIMESTAMP NULL
+) ENGINE=InnoDB;
+
 -- Índices para otimização
 CREATE INDEX idx_funcionarios_empresa ON funcionarios(empresa_id);
 CREATE INDEX idx_funcionarios_ativo ON funcionarios(ativo);
@@ -114,3 +129,5 @@ CREATE INDEX idx_epis_quantidade ON epis(quantidade_estoque, quantidade_minima);
 CREATE INDEX idx_movimentacoes_epi ON movimentacoes(epi_id);
 CREATE INDEX idx_movimentacoes_funcionario ON movimentacoes(funcionario_id);
 CREATE INDEX idx_movimentacoes_data ON movimentacoes(data_movimentacao);
+CREATE INDEX idx_failed_requests_status ON failed_requests(status);
+CREATE INDEX idx_failed_requests_created ON failed_requests(created_at);
