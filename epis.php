@@ -12,14 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'cadastrar':
                 $nome = sanitizar($_POST['nome']);
                 $descricao = sanitizar($_POST['descricao']);
-                $validade = $_POST['validade'];
                 $quantidade_minima = (int)$_POST['quantidade_minima'];
                 $saldo_estoque = (int)$_POST['saldo_estoque'];
                 
-                $query = "INSERT INTO epis (nome, descricao, validade, quantidade_minima, saldo_estoque) VALUES (?, ?, ?, ?, ?)";
+                $query = "INSERT INTO epis (nome, descricao, quantidade_minima, saldo_estoque) VALUES (?, ?, ?, ?)";
                 $stmt = $db->prepare($query);
                 
-                if ($stmt->execute([$nome, $descricao, $validade, $quantidade_minima, $saldo_estoque])) {
+                if ($stmt->execute([$nome, $descricao, $quantidade_minima, $saldo_estoque])) {
                     $sucesso = "EPI cadastrado com sucesso!";
                 } else {
                     $erro = "Erro ao cadastrar EPI.";
@@ -30,13 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $id = (int)$_POST['id'];
                 $nome = sanitizar($_POST['nome']);
                 $descricao = sanitizar($_POST['descricao']);
-                $validade = $_POST['validade'];
                 $quantidade_minima = (int)$_POST['quantidade_minima'];
                 
-                $query = "UPDATE epis SET nome = ?, descricao = ?, validade = ?, quantidade_minima = ? WHERE id = ?";
+                $query = "UPDATE epis SET nome = ?, descricao = ?, quantidade_minima = ? WHERE id = ?";
                 $stmt = $db->prepare($query);
                 
-                if ($stmt->execute([$nome, $descricao, $validade, $quantidade_minima, $id])) {
+                if ($stmt->execute([$nome, $descricao, $quantidade_minima, $id])) {
                     $sucesso = "EPI atualizado com sucesso!";
                 } else {
                     $erro = "Erro ao atualizar EPI.";
@@ -144,12 +142,6 @@ if (isset($_GET['editar'])) {
                             <input type="text" id="nome" name="nome" class="form-control" 
                                    value="<?php echo $epi_editando ? $epi_editando['nome'] : ''; ?>" required>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="validade">Data de Validade:</label>
-                            <input type="date" id="validade" name="validade" class="form-control" 
-                                   value="<?php echo $epi_editando ? $epi_editando['validade'] : ''; ?>" required>
-                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -212,7 +204,6 @@ if (isset($_GET['editar'])) {
                             <tr>
                                 <th>Nome</th>
                                 <th>Descrição</th>
-                                <th>Validade</th>
                                 <th>Estoque</th>
                                 <th>Mínimo</th>
                                 <th>Status</th>
@@ -224,13 +215,10 @@ if (isset($_GET['editar'])) {
                             <tr>
                                 <td><?php echo $epi['nome']; ?></td>
                                 <td><?php echo substr($epi['descricao'], 0, 50) . (strlen($epi['descricao']) > 50 ? '...' : ''); ?></td>
-                                <td><?php echo formatarData($epi['validade']); ?></td>
                                 <td><?php echo $epi['saldo_estoque']; ?></td>
                                 <td><?php echo $epi['quantidade_minima']; ?></td>
                                 <td>
-                                    <?php if (validadeVencida($epi['validade'])): ?>
-                                        <span class="status-badge status-danger">Vencido</span>
-                                    <?php elseif (estoqueMinimo($epi['saldo_estoque'], $epi['quantidade_minima'])): ?>
+                                    <?php if (estoqueMinimo($epi['saldo_estoque'], $epi['quantidade_minima'])): ?>
                                         <span class="status-badge status-warning">Estoque Baixo</span>
                                     <?php else: ?>
                                         <span class="status-badge status-ok">OK</span>

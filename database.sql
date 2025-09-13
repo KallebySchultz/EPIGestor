@@ -8,7 +8,8 @@ USE klarbyte_epi;
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100),
     senha VARCHAR(255) NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ativo BOOLEAN DEFAULT TRUE
@@ -19,7 +20,6 @@ CREATE TABLE epis (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     descricao TEXT,
-    validade DATE,
     quantidade_minima INT DEFAULT 0,
     saldo_estoque INT DEFAULT 0,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,9 +42,9 @@ CREATE TABLE movimentacoes (
 );
 
 -- Inserir usuário administrador padrão
-INSERT INTO usuarios (nome, email, senha) VALUES 
-('Administrador', 'admin@klarbyte.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
--- Senha padrão: password (deve ser alterada no primeiro login)
+INSERT INTO usuarios (nome, username, email, senha) VALUES 
+('Kalleby Schultz', 'kallebyschutz', 'admin@klarbyte.com', '$2y$10$RqpN3zqdiaUG0fx/SgzdBuLNLe1c5aGVSLQWOTyoF2byEpY9QjmrO');
+-- Senha padrão: admin123
 
 -- Índices para melhor performance
 CREATE INDEX idx_epi_nome ON epis(nome);

@@ -14,10 +14,10 @@ Sistema web para controle de equipamentos de proteção individual, desenvolvido
 ## Funcionalidades
 
 ### Gestão de EPIs
-- Cadastro de EPIs com nome, descrição, validade, quantidade mínima e saldo
+- Cadastro de EPIs com nome, descrição, quantidade mínima e saldo
 - Edição e exclusão de equipamentos
 - Busca por nome ou descrição
-- Status visual (OK, Estoque Baixo, Vencido)
+- Status visual (OK, Estoque Baixo)
 
 ### Controle de Estoque
 - Registro de entradas de estoque
@@ -28,13 +28,13 @@ Sistema web para controle de equipamentos de proteção individual, desenvolvido
 - Atualização automática do saldo
 
 ### Sistema de Usuários
-- Login com email e senha
+- Login com nome de usuário e senha
 - Criação e edição de usuários
 - Ativação/desativação de contas
 - Todos os usuários têm acesso completo (não há níveis diferentes)
 
 ### Dashboard
-- Estatísticas gerais (total de EPIs, vencidos, estoque baixo, movimentações do dia)
+- Estatísticas gerais (total de EPIs, estoque baixo, movimentações do dia)
 - Lista de EPIs requerendo atenção
 - Últimas movimentações registradas
 - Alertas visuais para situações críticas
@@ -79,8 +79,8 @@ Certifique-se de que os arquivos PHP tenham permissões adequadas de leitura.
 ## Primeiro Acesso
 
 ### Login Padrão
-- **Email:** admin@klarbyte.com
-- **Senha:** password
+- **Nome de Usuário:** kallebyschutz
+- **Senha:** admin123
 
 **Importante:** Altere a senha padrão após o primeiro login!
 
@@ -103,7 +103,7 @@ Certifique-se de que os arquivos PHP tenham permissões adequadas de leitura.
 
 ### 1. Cadastro de EPIs
 1. Acesse a seção "EPIs"
-2. Preencha o formulário com nome, descrição, validade, quantidade mínima e saldo inicial
+2. Preencha o formulário com nome, descrição, quantidade mínima e saldo inicial
 3. Clique em "Cadastrar"
 
 ### 2. Movimentações de Estoque
@@ -116,16 +116,16 @@ Certifique-se de que os arquivos PHP tenham permissões adequadas de leitura.
 
 ### 3. Gestão de Usuários
 1. Acesse a seção "Usuários"
-2. Preencha nome, email e senha
-3. Clique em "Criar Usuário"
-4. Use as ações para editar ou desativar usuários
+2. Preencha nome, nome de usuário e senha
+3. Email é opcional
+4. Clique em "Criar Usuário"
+5. Use as ações para editar ou desativar usuários
 
 ## Recursos Visuais
 
 ### Alertas de Status
-- **Verde (OK):** EPI com estoque adequado e dentro da validade
+- **Verde (OK):** EPI com estoque adequado
 - **Amarelo (Estoque Baixo):** Quantidade igual ou abaixo do mínimo
-- **Vermelho (Vencido):** Produto com validade vencida
 
 ### Dashboard
 - Cards com estatísticas principais

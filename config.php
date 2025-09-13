@@ -43,10 +43,6 @@ function formatarDataHora($data) {
     return date('d/m/Y H:i', strtotime($data));
 }
 
-function validadeVencida($validade) {
-    return strtotime($validade) < strtotime(date('Y-m-d'));
-}
-
 function estoqueMinimo($saldo, $minimo) {
     return $saldo <= $minimo;
 }
