@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de EPIs Klarbyte - Sistema de Gerenciamento</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Klarbyte EPIs</h1>
+                <small>Sistema de Gestão de Equipamentos de Proteção Individual</small>
+            </div>
+            <div class="user-info">
+                <span>Bem-vindo ao Sistema</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="container">
+        <!-- Cartão de Boas-vindas -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h2 class="card-title">Sistema de Gestão de EPIs Klarbyte</h2>
+            </div>
+            <div class="card-body">
+                <div style="text-align: center; padding: 2rem 0;">
+                    <h3>Selecione o tipo de acesso:</h3>
+                    <p>Escolha abaixo como deseja acessar o sistema de gestão de EPIs.</p>
+                    
+                    <div class="dashboard-grid" style="margin-top: 2rem;">
+                        <!-- Acesso Administrador -->
+                        <div class="stat-card" style="border-left-color: #007bff;">
+                            <div class="stat-number" style="color: #007bff;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.65 13.65 12 12 12S9 10.65 9 9V7L3 7V9C3 10.65 4.35 12 6 12V20C6 21.1 6.9 22 8 22H16C17.1 22 18 21.1 18 20V12C19.65 12 21 10.65 21 9Z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-label">Administrador</div>
+                            <p style="margin: 1rem 0; color: #6c757d;">
+                                Acesso completo ao sistema:<br>
+                                • Cadastro de EPIs<br>
+                                • Controle de estoque<br>
+                                • Gerenciar funcionários<br>
+                                • Relatórios e histórico
+                            </p>
+                            <a href="admin/" class="btn btn-primary" style="width: 100%;">
+                                Acessar como Administrador
+                            </a>
+                        </div>
+
+                        <!-- Acesso Usuário/Funcionário -->
+                        <div class="stat-card" style="border-left-color: #28a745;">
+                            <div class="stat-number" style="color: #28a745;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12C14.21 12 16 10.21 16 8S14.21 4 12 4 8 5.79 8 8 9.79 12 12 12M12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-label">Usuário/Funcionário</div>
+                            <p style="margin: 1rem 0; color: #6c757d;">
+                                Acesso para funcionários:<br>
+                                • Visualizar EPIs disponíveis<br>
+                                • Registrar retiradas/devoluções<br>
+                                • Consultar histórico pessoal<br>
+                                • Verificar prazos de validade
+                            </p>
+                            <a href="user/" class="btn btn-success" style="width: 100%;">
+                                Acessar como Usuário
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações do Sistema -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h3 class="card-title">Sobre o Sistema</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-col">
+                        <h4>Funcionalidades Principais</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Cadastro de EPIs:</strong> Gerencie equipamentos com informações completas incluindo validade, quantidade mínima e classificação</li>
+                            <li><strong>Controle de Estoque:</strong> Monitore níveis de estoque com alertas automáticos para reposição</li>
+                            <li><strong>Movimentações:</strong> Registre entradas, retiradas, devoluções e descartes com histórico completo</li>
+                            <li><strong>Funcionários:</strong> Cadastre funcionários e acompanhe o histórico de uso de EPIs</li>
+                            <li><strong>Alertas Visuais:</strong> Notificações para estoque baixo, vencimento próximo e EPIs vencidos</li>
+                        </ul>
+                    </div>
+                    <div class="form-col">
+                        <h4>Características do Sistema</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Interface Responsiva:</strong> Funciona perfeitamente em computadores, tablets e smartphones</li>
+                            <li><strong>Design Intuitivo:</strong> Navegação simples e clara com cores azul e branco</li>
+                            <li><strong>Segurança:</strong> Controle de acesso diferenciado para administradores e usuários</li>
+                            <li><strong>Relatórios:</strong> Histórico detalhado de todas as movimentações</li>
+                            <li><strong>Manutenção Fácil:</strong> Código bem documentado e estruturado</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requisitos do Sistema -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h3 class="card-title">Requisitos Técnicos</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Tecnologias Utilizadas:</strong><br>
+                    • <strong>Frontend:</strong> HTML5, CSS3, JavaScript<br>
+                    • <strong>Backend:</strong> PHP (apenas para conexão com banco)<br>
+                    • <strong>Banco de Dados:</strong> MySQL<br>
+                    • <strong>Design:</strong> Responsivo, compatível com todos os dispositivos
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>Configuração Inicial:</strong><br>
+                    1. Configure o banco de dados MySQL executando o arquivo <code>database.sql</code><br>
+                    2. Ajuste as configurações de conexão em <code>config/database.php</code><br>
+                    3. Acesse o sistema através do painel administrativo ou de usuário
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 2rem; color: #6c757d; border-top: 1px solid #dee2e6; margin-top: 2rem;">
+        <p>&copy; 2024 Klarbyte Sistemas - Sistema de Gestão de EPIs</p>
+        <p>Desenvolvido para controle eficiente de Equipamentos de Proteção Individual</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Animação de entrada para os cartões
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
