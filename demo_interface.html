@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Retry - Demonstração Visual</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 20px 0; margin-bottom: 30px; }
+        .header h1 { text-align: center; font-size: 2.5em; margin-bottom: 10px; }
+        .header p { text-align: center; font-size: 1.2em; opacity: 0.9; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 25px; overflow: hidden; }
+        .card-header { background-color: #f8f9fa; padding: 20px; border-bottom: 1px solid #dee2e6; }
+        .card-header h3 { color: #495057; font-size: 1.3em; }
+        .card-body { padding: 25px; }
+        .form-row { display: flex; gap: 20px; align-items: end; margin-bottom: 20px; }
+        .form-col { flex: 1; }
+        .form-col label { display: block; margin-bottom: 8px; font-weight: 600; color: #495057; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 1em; }
+        .form-control:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 3px rgba(0,123,255,0.25); }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; transition: all 0.3s; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-primary:hover { background-color: #0056b3; transform: translateY(-1px); }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; text-align: center; border-left: 4px solid; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
+        .stat-label { font-size: 1.1em; color: #6c757d; }
+        .table-container { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        .data-table th { background-color: #f8f9fa; font-weight: 600; color: #495057; }
+        .data-table tr:hover { background-color: #f8f9fa; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .badge-warning { background-color: #fff3cd; color: #856404; }
+        .badge-success { background-color: #d4edda; color: #155724; }
+        .badge-danger { background-color: #f8d7da; color: #721c24; }
+        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .code { background-color: #f8f9fa; padding: 3px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .highlight { background-color: #fff3cd; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🔄 Sistema de Retry de Requests</h1>
+            <p>Solução para: "Tente de novo a request: 0818:AFC7F:5C03CF:877B93:68C4EC4F"</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Retry Manual por ID -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🎯 Retry Manual por ID Específico</h3>
+            </div>
+            <div class="card-body">
+                <div class="highlight">
+                    <strong>📋 Request do Problema:</strong> 
+                    <code class="code">0818:AFC7F:5C03CF:877B93:68C4EC4F</code>
+                </div>
+                
+                <form>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="manual_request_id">ID da Request:</label>
+                            <input type="text" 
+                                   id="manual_request_id" 
+                                   name="manual_request_id" 
+                                   class="form-control" 
+                                   placeholder="Ex: 0818:AFC7F:5C03CF:877B93:68C4EC4F"
+                                   value="0818:AFC7F:5C03CF:877B93:68C4EC4F">
+                            <small style="color: #6c757d;">Informe o ID da request que deseja tentar novamente</small>
+                        </div>
+                        <div class="form-col" style="flex: 0 0 auto;">
+                            <button type="button" class="btn btn-primary">
+                                🔄 Tentar Novamente
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <div class="stat-card" style="border-left-color: #ffc107;">
+                <div class="stat-number" style="color: #ffc107;">3</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #dc3545;">
+                <div class="stat-number" style="color: #dc3545;">1</div>
+                <div class="stat-label">Falhadas</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #28a745;">
+                <div class="stat-number" style="color: #28a745;">5</div>
+                <div class="stat-label">Completadas</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #007bff;">
+                <div class="stat-number" style="color: #007bff;">9</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+
+        <!-- Lista de Requests -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📊 Histórico de Requests</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID da Request</th>
+                                <th>Operação</th>
+                                <th>Status</th>
+                                <th>Tentativas</th>
+                                <th>Criada em</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background-color: #fff3cd;">
+                                <td><code class="code">0818:AFC7F:5C03CF:877B93:68C4EC4F</code></td>
+                                <td>➕ Criar EPI</td>
+                                <td><span class="badge badge-warning">⏳ Pendente</span></td>
+                                <td>0/3</td>
+                                <td>13/09/2024 14:30</td>
+                                <td>
+                                    <button class="btn btn-primary" style="font-size: 0.9em; padding: 8px 16px;">
+                                        🔄 Retry
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code class="code">B4C2:8F91A:A73E42:D892E1:F7C841B9</code></td>
+                                <td>✏️ Atualizar EPI</td>
+                                <td><span class="badge badge-success">✅ Sucesso</span></td>
+                                <td>1/3</td>
+                                <td>13/09/2024 13:15</td>
+                                <td><span style="color: #28a745;">✅ Concluída</span></td>
+                            </tr>
+                            <tr>
+                                <td><code class="code">7A3E:D4F8B:C291A7:5B8E94:A6F2C8D1</code></td>
+                                <td>👤 Criar Funcionário</td>
+                                <td><span class="badge badge-danger">❌ Falhada</span></td>
+                                <td>3/3</td>
+                                <td>13/09/2024 12:45</td>
+                                <td><span style="color: #dc3545;">❌ Limite atingido</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instruções -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📖 Como Usar o Sistema</h3>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h4 style="color: #007bff; margin-bottom: 15px;">🔄 Retry Manual</h4>
+                        <p style="margin-bottom: 15px;">Para tentar novamente uma request específica:</p>
+                        <ol style="padding-left: 20px;">
+                            <li>Digite o ID da request no campo acima</li>
+                            <li>Clique em "Tentar Novamente"</li>
+                            <li>O sistema irá reprocessar a operação</li>
+                            <li>Acompanhe o status na tabela</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4 style="color: #28a745; margin-bottom: 15px;">📊 Status das Requests</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li style="margin-bottom: 8px;"><span class="badge badge-warning">⏳ Pendente</span> - Aguardando retry</li>
+                            <li style="margin-bottom: 8px;"><span class="badge badge-success">✅ Sucesso</span> - Concluída com sucesso</li>
+                            <li style="margin-bottom: 8px;"><span class="badge badge-danger">❌ Falhada</span> - Falhou após todas as tentativas</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 25px;">
+                    <strong>💡 Exemplo de Uso:</strong> 
+                    O ID <code class="code">0818:AFC7F:5C03CF:877B93:68C4EC4F</code> do problema statement 
+                    pode ser usado diretamente no formulário acima para testar o sistema de retry.
+                </div>
+            </div>
+        </div>
+
+        <!-- Recursos Implementados -->
+        <div class="card">
+            <div class="card-header">
+                <h3>✅ Recursos Implementados</h3>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div>
+                        <h4 style="color: #007bff;">🔧 Sistema Backend</h4>
+                        <ul>
+                            <li>Geração de IDs únicos hexadecimais</li>
+                            <li>Armazenamento em base de dados</li>
+                            <li>Retry automático com limite</li>
+                            <li>Tracking de status e tentativas</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #28a745;">🎨 Interface Web</h4>
+                        <ul>
+                            <li>Formulário de retry manual</li>
+                            <li>Dashboard com estatísticas</li>
+                            <li>Tabela de histórico</li>
+                            <li>Design responsivo</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #ffc107;">⚙️ Operações Suportadas</h4>
+                        <ul>
+                            <li>EPIs (criar, editar, excluir)</li>
+                            <li>Funcionários (CRUD completo)</li>
+                            <li>Movimentações (registros)</li>
+                            <li>Extensível para novos tipos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simular funcionalidade interativa
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            const input = document.getElementById('manual_request_id');
+            const value = input.value.trim();
+            
+            if (value) {
+                // Simular loading
+                this.innerHTML = '⏳ Processando...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    // Simular sucesso
+                    this.innerHTML = '✅ Retry Executado!';
+                    this.className = 'btn btn-success';
+                    
+                    // Reset após 3 segundos
+                    setTimeout(() => {
+                        this.innerHTML = '🔄 Tentar Novamente';
+                        this.className = 'btn btn-primary';
+                        this.disabled = false;
+                    }, 3000);
+                }, 2000);
+            } else {
+                alert('Por favor, informe o ID da request.');
+            }
+        });
+
+        // Animação de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
